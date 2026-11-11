@@ -3,7 +3,11 @@ import winreg
 # reads RunMRU from registry, hands back MRUdict and MRUorder
 def RunMRU():
     # open RunMRU folder inside HKEY_CURRENT_USER, frolder is the handle for the folder
-    folder = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Software\Microsoft\Windows\CurrentVersion\Explorer\RunMRU") 
+    # check if RunMRU exisit.
+    try:
+        folder = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Software\Microsoft\Windows\CurrentVersion\Explorer\RunMRU") 
+    except FileNotFoundError:
+        return {}, ""
     paperNum = 0   # paper number, starts at 0
     MRUdict = {}
     MRUorder = "" #backup incase MRUList doesnt exist
@@ -20,16 +24,23 @@ def RunMRU():
             return MRUdict, MRUorder # stop when no papers r left, hand back MRUdict and MRUorder
 # run RunMRU and print whats found
 MRUdict, MRUorder = RunMRU() 
-print(f"{"":-^40}")
-print(f"ORDER: {MRUorder:^25}")
-print(f"{"":-^40}")
-# Loops for each letter in the MRUorder, newest first
-for nextLetter in MRUorder:
-    # checks whether a letter is really in the list, or been deleted / missing
-    if nextLetter in MRUdict:
-        print(f"{MRUdict[nextLetter]:^40}")
-    else:
-        print(f"Letter: {nextLetter} is Missing")
-print(f"{"":-^40}")
-print(f"{"Done":^40}")
-print(f"{"":-^40}")
+# check if there was no dict found
+if MRUdict == {}:
+    print(f"{"":-^40}")
+    print(f"{"RunMRU not found.":^40}")
+    print(f"{"":-^40}")
+else:
+    print(f"{"":-^40}")
+    print(f"ORDER: {MRUorder:^25}")
+    print(f"{"":-^40}")
+    # Loops for each letter in the MRUorder, newest first
+    for nextLetter in MRUorder:
+        # checks whether a letter is really in the list, or been deleted / missing
+        if nextLetter in MRUdict:
+            print(f"{MRUdict[nextLetter]:^40}")
+        else:
+            print(f"Letter: {nextLetter} is Missing")
+    print(f"{"":-^40}")
+    print(f"{"Done":^40}")
+    print(f"{"":-^40}")
+
