@@ -21,6 +21,7 @@ def RunMRU():
                 MRUdict[letter] = typed[:-2]# slice last two chars of data to cut out noise
             paperNum+=1 # next page
         except OSError:
+            winreg.CloseKey(folder) # done reading, put the folder back
             return MRUdict, MRUorder # stop when no papers r left, hand back MRUdict and MRUorder
 # run RunMRU and print whats found
 MRUdict, MRUorder = RunMRU() 
