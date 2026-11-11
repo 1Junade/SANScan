@@ -10,10 +10,10 @@ def RunMRU():
         return {}, ""
     paperNum = 0   # paper number, starts at 0
     MRUdict = {}
-    MRUorder = "" #backup incase MRUList doesnt exist
+    MRUorder = "" # backup incase MRUList doesnt exist
     while True:
         try:
-            # grab paper number paperNum from folder, letter = letter, typed = what was typed, valType = (1,2,etc)
+            # grab paper number paperNum from folder, typed = what was typed, valType = (1,2,etc)
             letter, typed, valType =  winreg.EnumValue(folder , paperNum)
             if letter == "MRUList":
                 MRUorder = typed # get data, the order of MRUList
@@ -23,25 +23,95 @@ def RunMRU():
         except OSError:
             winreg.CloseKey(folder) # done reading, put the folder back
             return MRUdict, MRUorder # stop when no papers r left, hand back MRUdict and MRUorder
-# run RunMRU and print whats found
-MRUdict, MRUorder = RunMRU() 
-# check if there was no dict found
-if MRUdict == {}:
-    print(f"{"":-^40}")
-    print(f"{"RunMRU not found.":^40}")
-    print(f"{"":-^40}")
-else:
-    print(f"{"":-^40}")
-    print(f"ORDER: {MRUorder:^25}")
-    print(f"{"":-^40}")
-    # Loops for each letter in the MRUorder, newest first
-    for nextLetter in MRUorder:
-        # checks whether a letter is really in the list, or been deleted / missing
-        if nextLetter in MRUdict:
-            print(f"{MRUdict[nextLetter]:^40}")
+
+# reads TypedPaths from the registry, hands back TypedPath_dict
+def RunTypedPaths():
+    # check if TypedPaths exist
+    try:
+        folder = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Software\Microsoft\Windows\CurrentVersion\Explorer\TypedPaths")
+    except FileNotFoundError:
+        return {}  # return empty dict, incase TypedPaths doesnt exist
+    paperNum = 0 # paper number starts at 0
+    TypedPath_dict = {} 
+    while True:
+        try:
+            # grab paper number paperNum, Name = url1, url2, etc, Path = what was typed in the adress bar
+            Name, Path, valType = winreg.EnumValue(folder, paperNum)
+            TypedPath_dict[Name] = Path
+            paperNum +=1
+        except OSError:
+            winreg.CloseKey(folder) # done reading the TypedPaths folder, put folder back
+            return TypedPath_dict   # hand back the new dict 
+# menu, pick an artifact to run
+print(f"{"":-^40}")
+print(f"{"Menu":^40}")
+print(f"{"":-^40}")
+print(f"1. {"Run MRU":^34}")
+print(f"2. {"Run TypedPaths":^40}")
+print(f"0. {"Quit":^30}")
+print(f"{"":-^40}")
+
+while True:
+    try:
+        # take user input from the menu
+        UserInput = int (input("\nEnter a menu number: "))
+        print()
+    except ValueError:
+        print(f"{"":-^40}")
+        print("Enter a valid menu number.")
+        print(f"{"":-^40}")
+        continue
+    if UserInput == 0:
+        # user quits and leaves program
+        print(f"{"":-^40}")
+        print(f"{"Goodbye!"}")
+        print(f"{"":-^40}")
+        break
+    elif UserInput == 1:
+        MRUdict, MRUorder = RunMRU() 
+        # check if there was no dict found
+        if MRUdict == {}:
+            print()
+            print(f"{"":-^40}")
+            print(f"{"RunMRU not found.":^40}")
+            print(f"{"":-^40}")
         else:
-            print(f"Letter: {nextLetter} is Missing")
-    print(f"{"":-^40}")
-    print(f"{"Done":^40}")
-    print(f"{"":-^40}")
+            print(f"{"":-^40}")
+            print(f"ORDER: {MRUorder:^25}")
+            print(f"{"":-^40}")
+            # Loops for each letter in the MRUorder, newest first
+            for nextLetter in MRUorder:
+                # checks whether a letter is really in the dict, or been deleted / missing
+                if nextLetter in MRUdict:
+                    print(f"{MRUdict[nextLetter]:^40}")
+                else:
+                    print(f"Letter: {nextLetter} is Missing")
+            print(f"{"":-^40}")
+            print(f"{" Run MRU Done":^40}")
+            print(f"{"":-^40}")
+            print()
+    elif UserInput == 2:
+        # catch RunTypedPaths
+        TypedPaths_dict = RunTypedPaths()
+        if TypedPaths_dict == {}: # check if TypedPaths_dict is empty
+            print("TypedPaths not found.")
+        else:
+            print(f"{"":-^40}")
+            # count url1 url2, etc in order, newest first
+            for num in range(1, len(TypedPaths_dict) + 1):
+                urlName = f"url{num}"
+                # checks whether a url is in the dict, or has been deleted / missing
+                if urlName in TypedPaths_dict:
+                    print(f"{TypedPaths_dict[urlName]:^40}")
+                else:
+                    print(f"{urlName} is missing.") 
+            print(f"{"":-^40}")
+    else:
+        # user enters invalid number value
+        print(f"{"":-^40}")
+        print("Number must be 0-2")
+        print(f"{"":-^40}")
+    
+
+
 
