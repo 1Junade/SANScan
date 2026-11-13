@@ -20,7 +20,10 @@ def RunMRU():
             if letter == "MRUList":
                 MRUorder = typed # get data, the order of MRUList
             else:
-                MRUdict[letter] = typed[:-2]# slice last two chars of data to cut out noise
+                if typed.endswith(r"\1"):
+                    MRUdict[letter] = typed[:-2] # slice last two chars \1 only if its there
+                else:
+                    MRUdict[letter] = typed # no \1 is saved noramlly 
             paperNum+=1 # next page
         except OSError:
             winreg.CloseKey(folder) # done reading, put the folder back
@@ -74,16 +77,15 @@ print(f"{"":-^40}")
 while True:
     try:
         # take user input from the menu
-        try:
-            UserInput = int (input("\nEnter a menu number: "))
-        except KeyboardInterrupt:
-            break
+        UserInput = int (input("\nEnter a menu number: "))
         print()
     except ValueError:
         print(f"{"":-^40}")
         print("Enter a valid menu number.")
         print(f"{"":-^40}")
         continue
+    except KeyboardInterrupt: # Ctrl+C quits program without an error
+        break 
     if UserInput == 0:
         # user quits and leaves program
         print(f"{"":-^40}")
@@ -117,7 +119,9 @@ while True:
         # catch RunTypedPaths
         TypedPaths_dict = RunTypedPaths()
         if TypedPaths_dict == {}: # check if TypedPaths_dict is empty
-            print("TypedPaths not found.")
+            print(f"{"":-^40}")
+            print(f"{"TypedPaths not found.":^40}")
+            print(f"{"":-^40}")
         else:
             print(f"{"":-^40}")
             # count url1 url2, etc in order, newest first
@@ -133,7 +137,9 @@ while True:
         # catch RunPath_dict
         RunPath_dict = RunKeys()
         if RunPath_dict == {}: # check whether Run path dict is empty
-            print("No Run keys found.")
+            print(f"{"":-^40}")
+            print(f"{"No Run keys found.":^40}")
+            print(f"{"":-^40}")
         else:
             # loop through each startup app and its path
             for appName in RunPath_dict:
