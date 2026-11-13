@@ -9,7 +9,9 @@ Right now it reads RunMRU, which shows the history of commands typed into the Wi
 It shows from newest to oldest.
 If a letter is in the list but its command is gone, it will flag it as missing, which can mean it was deleted.
 
-Reads TypedPaths, which is the list of folder paths someone typed in the File Explorer search bar. It also shows the newest first, starting at url1, if a number is skipped it flags as missing.
+Reads TypedPaths, which is the list of folder paths someone typed in the File Explorer address bar. It also shows the newest first, starting at url1, if a number is skipped it flags as missing.
+
+Run Keys reads the startup programs and their paths. These programs are set to start automatically when you log in.
 
 ## How to run
 
@@ -17,7 +19,7 @@ Open a terminal in the SANScan folder and run the command below, no admin needed
 
 python SANScan.py
 
-When it starts a menu will pop up, type the menu number you want to run. Type 1 for RunMRU, 2 for TypedPaths, 0 to quit, etc.
+When it starts a menu will pop up, type the menu number you want to run. Type 0 to quit.
 
 ## Requirements
 

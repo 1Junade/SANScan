@@ -1,4 +1,6 @@
 import winreg
+import textwrap
+import shutil
 
 # reads RunMRU from registry, hands back MRUdict and MRUorder
 def RunMRU():
@@ -42,19 +44,40 @@ def RunTypedPaths():
         except OSError:
             winreg.CloseKey(folder) # done reading the TypedPaths folder, put folder back
             return TypedPath_dict   # hand back the new dict 
+def RunKeys():
+    # check if Run exists
+    try:
+        folder = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Software\Microsoft\Windows\CurrentVersion\Run")
+    except FileNotFoundError:
+        return {} # return and leave function with empty dict, incase Run doesnt exist
+    paperNum = 0 # paper number starts at 0
+    RunPath_dict = {}
+    while True:
+        try:
+            # grabs Paper num from folder, Name = Spotify, Discord, Mozilla, etc, Path, full path of startup apps
+            Name, fullPath, valType = winreg.EnumValue(folder, paperNum)
+            RunPath_dict[Name] = fullPath
+            paperNum +=1
+        except OSError:
+            winreg.CloseKey(folder) # done reading the Run folder, put folder back
+            return RunPath_dict # hand back new dict
+           
 # menu, pick an artifact to run
 print(f"{"":-^40}")
 print(f"{"Menu":^40}")
 print(f"{"":-^40}")
 print(f"1. {"Run MRU":^34}")
 print(f"2. {"Run TypedPaths":^40}")
+print(f"3. {"Run RunKeys":^38}")
 print(f"0. {"Quit":^30}")
 print(f"{"":-^40}")
-
 while True:
     try:
         # take user input from the menu
-        UserInput = int (input("\nEnter a menu number: "))
+        try:
+            UserInput = int (input("\nEnter a menu number: "))
+        except KeyboardInterrupt:
+            break
         print()
     except ValueError:
         print(f"{"":-^40}")
@@ -106,12 +129,21 @@ while True:
                 else:
                     print(f"{urlName} is missing.") 
             print(f"{"":-^40}")
+    elif UserInput == 3:
+        # catch RunPath_dict
+        RunPath_dict = RunKeys()
+        if RunPath_dict == {}: # check whether Run path dict is empty
+            print("No Run keys found.")
+        else:
+            # loop through each startup app and its path
+            for appName in RunPath_dict:
+                print(f"{"":-^40}")
+                print(f"{appName:^40}") # print app name
+                width = shutil.get_terminal_size().columns # get how wide the terminal is
+                print(textwrap.fill(RunPath_dict[appName], width=width)) # print app name path
+            print(f"{"":-^40}")
     else:
         # user enters invalid number value
         print(f"{"":-^40}")
-        print("Number must be 0-2")
+        print("Number must be 0-3")
         print(f"{"":-^40}")
-    
-
-
-
