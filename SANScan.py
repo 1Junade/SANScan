@@ -146,7 +146,7 @@ while True:
                 print(f"{"":-^40}")
                 print(f"{appName:^40}") # print app name
                 width = shutil.get_terminal_size().columns # get how wide the terminal is
-                print(textwrap.fill(RunPath_dict[appName], width=width)) # print app name path
+                print(textwrap.fill(str(RunPath_dict[appName]), width=width)) # print app name path
             print(f"{"":-^40}")
     else:
         # user enters invalid number value
