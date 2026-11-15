@@ -2,6 +2,18 @@ import winreg
 import textwrap
 import shutil
 
+
+# menu, pick an artifact to run
+def ShowMenu():
+    print(f"{"":-^40}")
+    print(f"{"Menu":^40}")
+    print(f"{"":-^40}")
+    print(f"1. {"Run MRU":^34}")
+    print(f"2. {"Run TypedPaths":^40}")
+    print(f"3. {"Run RunKeys":^38}")
+    print(f"0. {"Quit":^30}")
+    print(f"{"":-^40}")
+
 # reads RunMRU from registry, hands back MRUdict and MRUorder
 def RunMRU():
     # open RunMRU folder inside HKEY_CURRENT_USER, frolder is the handle for the folder
@@ -64,17 +76,8 @@ def RunKeys():
         except OSError:
             winreg.CloseKey(folder) # done reading the Run folder, put folder back
             return RunPath_dict # hand back new dict
-           
-# menu, pick an artifact to run
-print(f"{"":-^40}")
-print(f"{"Menu":^40}")
-print(f"{"":-^40}")
-print(f"1. {"Run MRU":^34}")
-print(f"2. {"Run TypedPaths":^40}")
-print(f"3. {"Run RunKeys":^38}")
-print(f"0. {"Quit":^30}")
-print(f"{"":-^40}")
 while True:
+    ShowMenu() # Show menu on each loop
     try:
         # take user input from the menu
         UserInput = int (input("\nEnter a menu number: "))
