@@ -5,13 +5,13 @@ import shutil
 
 # menu, pick an artifact to run
 def ShowMenu():
-    print(f"{"":-^40}")
+    print(f"\n{"":-^40}")
     print(f"{"Menu":^40}")
     print(f"{"":-^40}")
-    print(f"1. {"Run MRU":^34}")
-    print(f"2. {"Run TypedPaths":^40}")
-    print(f"3. {"Run RunKeys":^38}")
-    print(f"0. {"Quit":^30}")
+    print(f"1. Run MRU")
+    print(f"2. Run TypedPaths")
+    print(f"3. Run Keys")
+    print(f"0. {"Quit"}")
     print(f"{"":-^40}")
 
 # reads RunMRU from registry, hands back MRUdict and MRUorder
@@ -117,7 +117,6 @@ while True:
             print(f"{"":-^40}")
             print(f"{" Run MRU Done":^40}")
             print(f"{"":-^40}")
-            print()
     elif UserInput == 2:
         # catch RunTypedPaths
         TypedPaths_dict = RunTypedPaths()
@@ -138,7 +137,9 @@ while True:
                 if urlName in TypedPaths_dict:
                     print(f"{TypedPaths_dict[urlName]:^40}")
                 else:
-                    print(f"{urlName} is missing.") 
+                    print(f"{urlName} is missing.")
+            print(f"{"":-^40}")
+            print(f"{"TypedPaths Done":^40}")
             print(f"{"":-^40}")
     elif UserInput == 3:
         # catch RunPath_dict
@@ -154,6 +155,8 @@ while True:
                 print(f"{appName:^40}") # print app name
                 width = shutil.get_terminal_size().columns # get how wide the terminal is
                 print(textwrap.fill(str(RunPath_dict[appName]), width=width)) # print app name path
+            print(f"{"":-^40}")
+            print(f"{"Run Keys Done":^40}")
             print(f"{"":-^40}")
     else:
         # user enters invalid number value
