@@ -124,8 +124,12 @@ while True:
             print(f"{"":-^40}")
         else:
             print(f"{"":-^40}")
-            # count url1 url2, etc in order, newest first
-            for num in range(1, len(TypedPaths_dict) + 1):
+            highest = 0  # finds biggest url number, so missing ones dont get skipped
+            for name in TypedPaths_dict:
+                urlNum = int(name[3:])
+                if urlNum > highest:
+                    highest = urlNum
+            for num in range(1, highest + 1):  # count url1 url2, etc in order, newest first
                 urlName = f"url{num}"
                 # checks whether a url is in the dict, or has been deleted / missing
                 if urlName in TypedPaths_dict:
