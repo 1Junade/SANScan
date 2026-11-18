@@ -1,7 +1,8 @@
-import winreg
-import textwrap
-import shutil
-
+import winreg # read windows registry
+import textwrap # text wrap long text to fit terminal
+import shutil # get terminal width for textwrap
+import ctypes # call windows functions, calling admin
+import sys # python info used to relaunch as admin
 
 # menu, pick an artifact to run
 def ShowMenu():
@@ -85,7 +86,7 @@ def RunWifi():
     except FileNotFoundError:
         return [] # return empty list and leave funcation if it doesnt exist
     except PermissionError:
-        return None
+        return None # catches error and leaves function, key entry needs admin
     paperNum = 0 # starts at zero
     RunWifi_list = []
     while True:
@@ -97,14 +98,12 @@ def RunWifi():
         except OSError:
             winreg.CloseKey(folder) # close the key, and return list
             return RunWifi_list
-        
-            
 
-
-
-
-
-while True:
+if not ctypes.windll.shell32.IsUserAnAdmin():
+    # check if user is running as admin, if not relaunch with admin popup
+    ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, f'"{__file__}"', None, 1)
+    sys.exit() # close the non admin copy
+while True:    
     ShowMenu() # Show menu on each loop
     try:
         # take user input from the menu
