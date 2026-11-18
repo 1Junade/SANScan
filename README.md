@@ -13,13 +13,17 @@ Reads TypedPaths, which is the list of folder paths someone typed in the File Ex
 
 Run Keys reads the startup programs and their paths. These programs are set to start automatically when you log in.
 
+Wifi reads the network profiles Window saves for every network the PC has joined. Right now it only lists each network folder ID, the long GUID. Network names and first and last connceted dates are to come.
+
 ## How to run
 
-Open a terminal in the SANScan folder and run the command below, no admin needed since it is your own registry.
+Open a terminal in the SANScan folder and run the command below
 
 python SANScan.py
 
 When it starts a menu will pop up, type the menu number you want to run. Type 0 to quit.
+
+Wifi reads the newtork profiles, which is a part of the registry that needs admin. So, when you start SANScan, it will ask to run as admin with a popup, click Yes, and it will open in a new elevated admin window.
 
 ## Requirements
 
