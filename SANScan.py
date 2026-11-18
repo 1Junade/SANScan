@@ -9,14 +9,13 @@ def ShowMenu():
     print(f"\n{"":-^40}")
     print(f"{"Menu":^40}")
     print(f"{"":-^40}")
-    print(f"1. Run MRU")
-    print(f"2. Run TypedPaths")
-    print(f"3. Run Keys")
-    print(f"0. {"Quit"}")
-    print(" Run Wifi Coming ...")
+    print("1. Run MRU")
+    print("2. Run TypedPaths")
+    print("3. Run Keys")
+    print("4. Run Wifi")
+    print("0. Quit")
     print(f"{"":-^40}")
     
-
 # reads RunMRU from registry, hands back MRUdict and MRUorder
 def RunMRU():
     # open RunMRU folder inside HKEY_CURRENT_USER, frolder is the handle for the folder
@@ -185,8 +184,22 @@ while True:
             print(f"{"":-^40}")
             print(f"{"Run Keys Done":^40}")
             print(f"{"":-^40}")
+    elif UserInput == 4:
+            # catch RunWifi list
+        RunWifi_list = RunWifi()
+        if RunWifi_list is None: # check if user is running as admin # Check if user is running as admin
+            print(f"{"":-^40}")
+            print(f"{"Run Program as Admin.":^40}")
+        elif RunWifi_list == []: # check if user has any networks in the list == []: # check if user has any networks in the list
+            print(f"{"":-^40}")
+            print(f"{"No Networks Found.":^40}")
+        else:
+            for wifi in RunWifi_list: # loop through each network folder
+                print(f"{"":-^40}")
+                print(wifi)
+        print(f"{"":-^40}")
     else:
         # user enters invalid number value
         print(f"{"":-^40}")
-        print("Number must be 0-3")
+        print("Number must be 0-4")
         print(f"{"":-^40}")
