@@ -12,7 +12,9 @@ def ShowMenu():
     print(f"2. Run TypedPaths")
     print(f"3. Run Keys")
     print(f"0. {"Quit"}")
+    print(" Run Wifi Coming ...")
     print(f"{"":-^40}")
+    
 
 # reads RunMRU from registry, hands back MRUdict and MRUorder
 def RunMRU():
@@ -76,6 +78,32 @@ def RunKeys():
         except OSError:
             winreg.CloseKey(folder) # done reading the Run folder, put folder back
             return RunPath_dict # hand back new dict
+def RunWifi():
+    # check is Network list profiles exist
+    try:
+        folder = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Windows NT\CurrentVersion\NetworkList\Profiles")
+    except FileNotFoundError:
+        return [] # return empty list and leave funcation if it doesnt exist
+    except PermissionError:
+        return None
+    paperNum = 0 # starts at zero
+    RunWifi_list = []
+    while True:
+        try:
+            # grab network folders
+            Network_GUID = winreg.EnumKey(folder, paperNum)
+            RunWifi_list.append(Network_GUID) # append network folder to the list
+            paperNum +=1 # next folder
+        except OSError:
+            winreg.CloseKey(folder) # close the key, and return list
+            return RunWifi_list
+        
+            
+
+
+
+
+
 while True:
     ShowMenu() # Show menu on each loop
     try:
