@@ -27,6 +27,7 @@ def RunMRU():
     paperNum = 0   # paper number, starts at 0
     MRUdict = {}
     MRUorder = "" # backup incase MRUList doesnt exist
+
     while True:
         try:
             # grab paper number paperNum from folder, typed = what was typed, valType = (1,2,etc)
@@ -61,6 +62,7 @@ def RunTypedPaths():
         except OSError:
             winreg.CloseKey(folder) # done reading the TypedPaths folder, put folder back
             return TypedPath_dict   # hand back the new dict 
+        
 def RunKeys():
     # check if Run exists
     try:
@@ -78,6 +80,7 @@ def RunKeys():
         except OSError:
             winreg.CloseKey(folder) # done reading the Run folder, put folder back
             return RunPath_dict # hand back new dict
+        
 def RunWifi():
     # check is Network list profiles exist
     try:
@@ -88,11 +91,15 @@ def RunWifi():
         return None # catches error and leaves function, key entry needs admin
     paperNum = 0 # starts at zero
     RunWifi_list = []
+
     while True:
         try:
             # grab network folders
             Network_GUID = winreg.EnumKey(folder, paperNum)
-            RunWifi_list.append(Network_GUID) # append network folder to the list
+            netFolder = winreg.OpenKey(folder, Network_GUID) # open the networks GUID folder inside Profiles
+            netName, valType = winreg.QueryValueEx(netFolder, "ProfileName") # grab ProfileName value by its name
+            winreg.CloseKey(netFolder) # put key back with the network folder
+            RunWifi_list.append(netName) # append network name to the list
             paperNum +=1 # next folder
         except OSError:
             winreg.CloseKey(folder) # close the key, and return list
@@ -102,7 +109,9 @@ if not ctypes.windll.shell32.IsUserAnAdmin():
     # check if user is running as admin, if not relaunch with admin popup
     ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, f'"{__file__}"', None, 1)
     sys.exit() # close the non admin copy
+
 while True:    
+
     ShowMenu() # Show menu on each loop
     try:
         # take user input from the menu
@@ -122,6 +131,7 @@ while True:
         print(f"{"":-^40}")
         break
     elif UserInput == 1:
+
         MRUdict, MRUorder = RunMRU() 
         # check if there was no dict found
         if MRUdict == {}:
@@ -144,6 +154,7 @@ while True:
             print(f"{" Run MRU Done":^40}")
             print(f"{"":-^40}")
     elif UserInput == 2:
+
         # catch RunTypedPaths
         TypedPaths_dict = RunTypedPaths()
         if TypedPaths_dict == {}: # check if TypedPaths_dict is empty
@@ -168,6 +179,7 @@ while True:
             print(f"{"TypedPaths Done":^40}")
             print(f"{"":-^40}")
     elif UserInput == 3:
+
         # catch RunPath_dict
         RunPath_dict = RunKeys()
         if RunPath_dict == {}: # check whether Run path dict is empty
@@ -185,6 +197,7 @@ while True:
             print(f"{"Run Keys Done":^40}")
             print(f"{"":-^40}")
     elif UserInput == 4:
+
             # catch RunWifi list
         RunWifi_list = RunWifi()
         if RunWifi_list is None: # check if user is running as admin # Check if user is running as admin
