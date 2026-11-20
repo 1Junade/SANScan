@@ -120,7 +120,9 @@ def RunWifi():
             if netName is None: # GetValue hands back None when ProfileName is missing
                 netName = "No Name Found" # placeholder so the network still shows up
             winreg.CloseKey(netFolder) # put key back with the network folder
-            RunWifi_list.append(netName) # append network name to the list
+            netInfo = {} # new empty dict for this one network, holds all its info
+            netInfo["Name"] = netName # save the name in the box labeled Name
+            RunWifi_list.append(netInfo) # put this networks dict in the list
             paperNum +=1 # next folder
 
         except OSError:
@@ -232,11 +234,10 @@ while True:
             print(f"{"":-^40}")
             print(f"{"No Networks Found.":^40}")
         else:
-            for wifi in RunWifi_list: # loop through each network folder
+            for network in RunWifi_list: # loop through each network dict, one at a time
                 print(f"{"":-^40}")
-                print(wifi)
+                print(network["Name"]) # open this networks Name box and print it
         print(f"{"":-^40}")
-
     else:
         # user enters invalid number value
         print(f"{"":-^40}")
