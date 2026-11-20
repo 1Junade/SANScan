@@ -15,11 +15,20 @@ def ShowMenu():
     print("4. Run Wifi")
     print("0. Quit")
     print(f"{"":-^40}")
+
+# grabs one value from a network folder by its name, hands back None if its missing
+def GetValue(netFolder, valueName):
+    try: 
+        data, valType = winreg.QueryValueEx(netFolder, valueName)
+        return data  # hand back just the data
+    except FileNotFoundError:
+        return None # no file means value doesnt exist in this network folder
     
 # reads RunMRU from registry, hands back MRUdict and MRUorder
 def RunMRU():
     # open RunMRU folder inside HKEY_CURRENT_USER, frolder is the handle for the folder
     # check if RunMRU exisit.
+
     try:
         folder = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Software\Microsoft\Windows\CurrentVersion\Explorer\RunMRU") 
     except FileNotFoundError:
@@ -29,6 +38,7 @@ def RunMRU():
     MRUorder = "" # backup incase MRUList doesnt exist
 
     while True:
+
         try:
             # grab paper number paperNum from folder, typed = what was typed, valType = (1,2,etc)
             letter, typed, valType =  winreg.EnumValue(folder , paperNum)
@@ -46,6 +56,7 @@ def RunMRU():
 
 # reads TypedPaths from the registry, hands back TypedPath_dict
 def RunTypedPaths():
+
     # check if TypedPaths exist
     try:
         folder = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Software\Microsoft\Windows\CurrentVersion\Explorer\TypedPaths")
@@ -53,7 +64,9 @@ def RunTypedPaths():
         return {}  # return empty dict, incase TypedPaths doesnt exist
     paperNum = 0 # paper number starts at 0
     TypedPath_dict = {} 
+
     while True:
+
         try:
             # grab paper number paperNum, Name = url1, url2, etc, Path = what was typed in the adress bar
             Name, Path, valType = winreg.EnumValue(folder, paperNum)
@@ -64,6 +77,7 @@ def RunTypedPaths():
             return TypedPath_dict   # hand back the new dict 
         
 def RunKeys():
+
     # check if Run exists
     try:
         folder = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Software\Microsoft\Windows\CurrentVersion\Run")
@@ -71,7 +85,9 @@ def RunKeys():
         return {} # return and leave function with empty dict, incase Run doesnt exist
     paperNum = 0 # paper number starts at 0
     RunPath_dict = {}
+
     while True:
+
         try:
             # grabs Paper num from folder, Name = Spotify, Discord, Mozilla, etc, Path, full path of startup apps
             Name, fullPath, valType = winreg.EnumValue(folder, paperNum)
@@ -82,6 +98,7 @@ def RunKeys():
             return RunPath_dict # hand back new dict
         
 def RunWifi():
+
     # check is Network list profiles exist
     try:
         folder = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Windows NT\CurrentVersion\NetworkList\Profiles")
@@ -89,26 +106,29 @@ def RunWifi():
         return [] # return empty list and leave funcation if it doesnt exist
     except PermissionError:
         return None # catches error and leaves function, key entry needs admin
+    
     paperNum = 0 # starts at zero
     RunWifi_list = []
 
     while True:
+
         try:
             # grab network folders
             Network_GUID = winreg.EnumKey(folder, paperNum)
             netFolder = winreg.OpenKey(folder, Network_GUID) # open the networks GUID folder inside Profiles
-            try: # ProfileName might be missing in some network folders
-                netName, valType = winreg.QueryValueEx(netFolder, "ProfileName") # grab ProfileName value by its name
-            except FileNotFoundError:
-                netName = "No Name Found" # catch it here so the outer except OSError doesnt end the loop early
+            netName = GetValue(netFolder, "ProfileName") # send GetValue to grab ProfileName, catch what it hands back
+            if netName is None: # GetValue hands back None when ProfileName is missing
+                netName = "No Name Found" # placeholder so the network still shows up
             winreg.CloseKey(netFolder) # put key back with the network folder
             RunWifi_list.append(netName) # append network name to the list
             paperNum +=1 # next folder
+
         except OSError:
             winreg.CloseKey(folder) # close the key, and return list
             return RunWifi_list
 
 if not ctypes.windll.shell32.IsUserAnAdmin():
+
     # check if user is running as admin, if not relaunch with admin popup
     ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, f'"{__file__}"', None, 1)
     sys.exit() # close the non admin copy
@@ -117,6 +137,7 @@ while True:
 
     ShowMenu() # Show menu on each loop
     try:
+
         # take user input from the menu
         UserInput = int (input("\nEnter a menu number: "))
         print()
@@ -127,14 +148,15 @@ while True:
         continue
     except KeyboardInterrupt: # Ctrl+C quits program without an error
         break 
+
     if UserInput == 0:
         # user quits and leaves program
         print(f"{"":-^40}")
         print(f"{"Goodbye!"}")
         print(f"{"":-^40}")
         break
-    elif UserInput == 1:
 
+    elif UserInput == 1:
         MRUdict, MRUorder = RunMRU() 
         # check if there was no dict found
         if MRUdict == {}:
@@ -156,8 +178,8 @@ while True:
             print(f"{"":-^40}")
             print(f"{" Run MRU Done":^40}")
             print(f"{"":-^40}")
-    elif UserInput == 2:
 
+    elif UserInput == 2:
         # catch RunTypedPaths
         TypedPaths_dict = RunTypedPaths()
         if TypedPaths_dict == {}: # check if TypedPaths_dict is empty
@@ -181,8 +203,8 @@ while True:
             print(f"{"":-^40}")
             print(f"{"TypedPaths Done":^40}")
             print(f"{"":-^40}")
-    elif UserInput == 3:
 
+    elif UserInput == 3:
         # catch RunPath_dict
         RunPath_dict = RunKeys()
         if RunPath_dict == {}: # check whether Run path dict is empty
@@ -199,8 +221,8 @@ while True:
             print(f"{"":-^40}")
             print(f"{"Run Keys Done":^40}")
             print(f"{"":-^40}")
-    elif UserInput == 4:
 
+    elif UserInput == 4:
             # catch RunWifi list
         RunWifi_list = RunWifi()
         if RunWifi_list is None: # check if user is running as admin # Check if user is running as admin
@@ -214,6 +236,7 @@ while True:
                 print(f"{"":-^40}")
                 print(wifi)
         print(f"{"":-^40}")
+
     else:
         # user enters invalid number value
         print(f"{"":-^40}")
