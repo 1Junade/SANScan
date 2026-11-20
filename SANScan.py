@@ -97,7 +97,10 @@ def RunWifi():
             # grab network folders
             Network_GUID = winreg.EnumKey(folder, paperNum)
             netFolder = winreg.OpenKey(folder, Network_GUID) # open the networks GUID folder inside Profiles
-            netName, valType = winreg.QueryValueEx(netFolder, "ProfileName") # grab ProfileName value by its name
+            try: # ProfileName might be missing in some network folders
+                netName, valType = winreg.QueryValueEx(netFolder, "ProfileName") # grab ProfileName value by its name
+            except FileNotFoundError:
+                netName = "No Name Found" # catch it here so the outer except OSError doesnt end the loop early
             winreg.CloseKey(netFolder) # put key back with the network folder
             RunWifi_list.append(netName) # append network name to the list
             paperNum +=1 # next folder
