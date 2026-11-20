@@ -13,7 +13,7 @@ Reads TypedPaths, which is the list of folder paths someone typed in the File Ex
 
 Run Keys reads the startup programs and their paths. These programs are set to start automatically when you log in.
 
-Wifi reads the network profiles Window saves for every network the PC has joined. Right now it only lists each network folder ID, the long GUID. Network names and first and last connceted dates are to come.
+Wifi reads the network profiles Windows saves for every network the PC has joined. Right now it shows each network's name. First and last connected dates are to come.
 
 ## How to run
 
@@ -23,7 +23,7 @@ python SANScan.py
 
 When it starts a menu will pop up, type the menu number you want to run. Type 0 to quit.
 
-Wifi reads the newtork profiles, which is a part of the registry that needs admin. So, when you start SANScan, it will ask to run as admin with a popup, click Yes, and it will open in a new elevated admin window.
+Wifi reads the network profiles, which is a part of the registry that needs admin. So, when you start SANScan, it will ask to run as admin with a popup, click Yes, and it will open in a new elevated admin window.
 
 ## Requirements
 
@@ -31,5 +31,5 @@ Windows, Python 3.12 or newer.
 
 ## Why
 
-Building my own forensics tool to understand how it works, instead of someone elses tool.
+Building my own forensics tool to understand how it works, instead of someone else's tool.
 Planning to add more artifacts.
